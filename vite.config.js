@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: "docs" // GitHub Pages 默认识别 docs 目录
-  }
+  },
+  base: '/score/'
 })

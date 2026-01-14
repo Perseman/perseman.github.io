@@ -10,6 +10,7 @@ const uiText = {
   "tasksTitle": "任务",
   "tasksDesc": "输入次数或数量即可看到当日总积分与可领取档位。",
   "daySelectLabel": "当前选择",
+  "currentScoreLabel": "当前积分",
   "totalLabel": "全周期总积分",
   "reachedPrefix": "已达",
   "notReachedPrefix": "未达",
@@ -502,6 +503,8 @@ function App() {
   })
   const [quantities, setQuantities] = useState({})
   const [activeDayId, setActiveDayId] = useState(days[0]?.id ?? '')
+  const [baseScore, setBaseScore] = useState('')
+  const currentScore = Math.max(0, parseNumber(baseScore))
 
   useEffect(() => {
     window.localStorage.setItem('score-bonuses', JSON.stringify(bonuses))
@@ -524,18 +527,20 @@ function App() {
         })
 
         const total = tasks.reduce((sum, task) => sum + task.score, 0)
+        const totalWithBase = total + currentScore
 
         return {
           ...day,
           tasks,
           total,
-          tierInfo: getTierInfo(total),
+          totalWithBase,
+          tierInfo: getTierInfo(totalWithBase),
         }
       }),
-    [bonuses, quantities],
+    [bonuses, quantities, currentScore],
   )
 
-  const totalScore = daySummaries.reduce((sum, day) => sum + day.total, 0)
+  const totalScore = daySummaries.reduce((sum, day) => sum + day.total, 0) + currentScore
   const totalTier = getTierInfo(totalScore)
   const firstTierLabel = rewardTiers[0]?.label ?? '第一档'
   const activeDay =
@@ -599,19 +604,36 @@ function App() {
           <h2>{uiText.tasksTitle}</h2>
           {uiText.tasksDesc ? <p>{uiText.tasksDesc}</p> : null}
         </div>
-        <div className="day-selector">
-          <span className="day-selector-label">{uiText.daySelectLabel}</span>
-          <div className="day-selector-control">
-            <select
-              value={activeDay?.id ?? ''}
-              onChange={(event) => setActiveDayId(event.target.value)}
-            >
-              {daySummaries.map((day) => (
-                <option key={day.id} value={day.id}>
-                  {day.label}
-                </option>
-              ))}
-            </select>
+        <div className="day-controls">
+          <div className="day-selector">
+            <span className="day-selector-label">{uiText.daySelectLabel}</span>
+            <div className="day-selector-control">
+              <select
+                value={activeDay?.id ?? ''}
+                onChange={(event) => setActiveDayId(event.target.value)}
+              >
+                {daySummaries.map((day) => (
+                  <option key={day.id} value={day.id}>
+                    {day.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="score-input">
+            <span className="day-selector-label">{uiText.currentScoreLabel}</span>
+            <div className="score-input-control">
+              <input
+                type="number"
+                min="0"
+                step="1"
+                inputMode="decimal"
+                placeholder="0"
+                value={baseScore}
+                onChange={(event) => setBaseScore(event.target.value)}
+              />
+              <span className="score-input-suffix">{uiText.pointsUnit}</span>
+            </div>
           </div>
         </div>
         <div className="days-grid">
@@ -625,7 +647,7 @@ function App() {
                 <div>
                   <div className="day-title">{activeDay.label}</div>
                   <div className="day-total">
-                    {formatNumber(activeDay.total)} {uiText.pointsUnit}
+                    {formatNumber(activeDay.totalWithBase)} {uiText.pointsUnit}
                   </div>
                 </div>
                 <div className="day-tier">
@@ -637,7 +659,7 @@ function App() {
                   <span className="tier-next">
                     {activeDay.tierInfo.next
                       ? `${uiText.nextPrefix}：${activeDay.tierInfo.next.label}，${uiText.gapLabel} ${formatNumber(
-                          activeDay.tierInfo.next.threshold - activeDay.total,
+                          activeDay.tierInfo.next.threshold - activeDay.totalWithBase,
                         )} ${uiText.pointsUnit}`
                       : uiText.unlocked}
                   </span>

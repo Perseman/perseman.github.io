@@ -167,6 +167,13 @@
   gap: 24px;
 }
 
+.day-controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .day-selector {
   display: flex;
   align-items: center;
@@ -197,6 +204,46 @@
 .day-selector-control select:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.2);
+}
+
+.score-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 20px 35px -35px var(--shadow);
+}
+
+.score-input-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+}
+
+.score-input-control input {
+  border: none;
+  background: transparent;
+  width: 120px;
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.score-input-control input:focus {
+  outline: none;
+}
+
+.score-input-suffix {
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .day-card {
@@ -376,6 +423,10 @@
     grid-template-columns: 1fr;
   }
 
+  .day-controls {
+    align-items: stretch;
+  }
+
   .day-selector {
     align-items: stretch;
   }
@@ -385,6 +436,19 @@
   }
 
   .day-selector-control select {
+    width: 100%;
+  }
+
+  .score-input {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .score-input-control {
+    width: 100%;
+  }
+
+  .score-input-control input {
     width: 100%;
   }
 

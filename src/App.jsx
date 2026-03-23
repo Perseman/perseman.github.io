@@ -193,7 +193,7 @@ const days = [
       {
         "id": "day2-task6",
         "name": "消耗1个橙色碎片",
-        "points": 600
+        "points": 6000
       },
       {
         "id": "day2-task7",
